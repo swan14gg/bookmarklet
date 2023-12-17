@@ -1,55 +1,58 @@
-javascript: (() => {
+javascript: {
   const headings = ["h1", "h2", "h3", "h4", "h5", "h6"];
   const sectioningContents = ["article", "section", "aside", "nav"];
   const hgroups = ["hgroup"];
   const applyStyles = (el, tag, color) => {
-    el.style.border = `2px solid ${color}`;
-    el.style.position = "relative";
-    el.style.overflow = "hidden";
+    Object.assign(el.style, {
+      border: `2px solid ${color}`,
+      position: "relative",
+      overflow: "hidden",
+    });
 
     const label = document.createElement("div");
-    label.textContent = `${tag.toUpperCase()}: ${el.textContent
-      .trim()
-      .substring(0, 20)}`;
-    label.style.backgroundColor = color;
-    label.style.color = "black";
-    label.style.position = "absolute";
-    label.style.right = "0";
-    label.style.bottom = "0";
-    label.style.padding = "2px 5px";
-    label.style.fontSize = "8px";
-    label.style.border = `1px solid ${color}`;
-    label.style.opacity = "0.8";
-    label.style.transition = "opacity 0.3s";
-    label.style.zIndex = "10";
+    label.textContent = `${tag}: ${el.textContent.trim().slice(0, 20)}`;
+    Object.assign(label.style, {
+      backgroundColor: color,
+      color: "black",
+      position: "absolute",
+      right: 0,
+      bottom: 0,
+      padding: "2px 5px",
+      fontSize: "8px",
+      border: `1px solid ${color}`,
+      opacity: 0.8,
+      transition: "opacity 0.3s",
+      zIndex: 10,
+    });
 
     el.addEventListener("mouseover", (event) => {
       event.stopPropagation();
-      label.style.opacity = "1";
-      label.style.zIndex = "1000";
+      Object.assign(label.style, {
+        opacity: 1,
+        zIndex: 1000,
+      });
     });
 
     el.addEventListener("mouseout", (event) => {
       event.stopPropagation();
-      label.style.opacity = "0.8";
-      label.style.zIndex = "10";
+      Object.assign(label.style, {
+        opacity: 0.8,
+        zIndex: 10,
+      });
     });
 
     el.appendChild(label);
   };
 
-  headings.forEach((tag) => {
-    const elements = document.querySelectorAll(tag);
-    elements.forEach((el) => applyStyles(el, tag, "wheat"));
-  });
-
-  sectioningContents.forEach((tag) => {
-    const elements = document.querySelectorAll(tag);
-    elements.forEach((el) => applyStyles(el, tag, "lightgreen"));
-  });
-
-  hgroups.forEach((tag) => {
-    const elements = document.querySelectorAll(tag);
-    elements.forEach((el) => applyStyles(el, tag, "lightcoral"));
-  });
-})();
+  [headings, sectioningContents, hgroups].forEach((tags, index) =>
+    document
+      .querySelectorAll(tags.join(","))
+      .forEach((el) =>
+        applyStyles(
+          el,
+          el.tagName,
+          ["wheat", "lightgreen", "lightcoral"][index]
+        )
+      )
+  );
+}
